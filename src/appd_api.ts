@@ -2,9 +2,28 @@ import * as rp from 'request-promise';
 import * as util from 'util';
 
 interface IApplication {
-    id: string;
+    id: number;
     name: string;
     description: string;
+}
+
+interface IBusinessTransaction {
+    internalName: string;
+    tierId: number;
+    entryPointType: string;
+    background: boolean;
+    tierName: string;
+    name: string;
+    id: number;
+}
+
+interface ITier {
+    agentType: string;
+    name: string;
+    description: string;
+    id: number;
+    numberOfNodes: number;
+    type: string;
 }
 
 export class AppDynamicsApi {
@@ -72,9 +91,32 @@ export class AppDynamicsApi {
         }
 
         uri = util.format(uri, appID);
-        return this.makeRequest(uri).then((bts: object[]) => {
+        return this.makeRequest(uri).then((bts: IBusinessTransaction[]) => {
             console.log(`Found BTs: ${bts}`);
             return bts;
+
+
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+
+    }
+
+    getTiers(app) {
+
+        let uri = '/controller/rest/applications/%s/tiers';
+        let appID = null;
+
+        if (typeof app === 'object') {
+            appID = app.id;
+        } else {
+            appID = app;
+        }
+
+        uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((tiers: ITier[]) => {
+            console.log(`Found Tiers: ${tiers}`);
+            return tiers;
 
 
         }).catch((err) => {

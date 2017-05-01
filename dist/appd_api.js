@@ -57,5 +57,22 @@ class AppDynamicsApi {
             console.log(`ERROR: ${err}`);
         });
     }
+    getTiers(app) {
+        let uri = '/controller/rest/applications/%s/tiers';
+        let appID = null;
+        if (typeof app === 'object') {
+            appID = app.id;
+        }
+        else {
+            appID = app;
+        }
+        uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((tiers) => {
+            console.log(`Found Tiers: ${tiers}`);
+            return tiers;
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
 }
 exports.AppDynamicsApi = AppDynamicsApi;
