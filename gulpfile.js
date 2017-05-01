@@ -11,20 +11,9 @@ gulp.task('compile', () => {
     return tsResult.js.pipe(gulp.dest('dist'))
 });
 
-gulp.task('assets', function () {
-    return gulp.src(JSON_FILES)
-        .pipe(gulp.dest('dist'));
-});
-
-gulp.task('partials', function () {
-    return gulp.src(['src/datasource-appdynamics/partials/*'])
-        .pipe(gulp.dest('dist/datasource-appdynamics/partials/'));
-});
 
 gulp.task('watch', ['compile'], () => {
     gulp.watch('src/**/*.ts', ['compile']);
-    gulp.watch('src/**/*.json', ['assets']);
-    gulp.watch('src/datasource-appdynamics/partials/*', ['partials']);
 })
 
-gulp.task('default', ['watch', 'assets', 'partials']);
+gulp.task('default', ['watch']);
