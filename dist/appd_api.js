@@ -50,7 +50,7 @@ class AppDynamicsApi {
             appID = app;
         }
         uri = util.format(uri, appID);
-        this.makeRequest(uri).then((bts) => {
+        return this.makeRequest(uri).then((bts) => {
             console.log(`Found BTs: ${bts}`);
             return bts;
         }).catch((err) => {
@@ -59,10 +59,3 @@ class AppDynamicsApi {
     }
 }
 exports.AppDynamicsApi = AppDynamicsApi;
-const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
-appD.getBusinessApplications().then((apps) => {
-    apps.forEach((app) => {
-        console.log(app);
-        appD.getBusinessTransactions(app);
-    });
-});

@@ -1,6 +1,12 @@
 import * as rp from 'request-promise';
 import * as util from 'util';
 
+interface IApplication {
+    id: string;
+    name: string;
+    description: string;
+}
+
 export class AppDynamicsApi {
 
 
@@ -44,7 +50,7 @@ export class AppDynamicsApi {
 
         const uri = '/controller/rest/applications';
         return this.makeRequest(uri)
-            .then((apps: object[]) => {
+            .then((apps: IApplication[]) => {
                 console.log(`Found apps: ${apps}`);
                 return apps;
             })
@@ -66,7 +72,7 @@ export class AppDynamicsApi {
         }
 
         uri = util.format(uri, appID);
-        this.makeRequest(uri).then((bts: object[]) => {
+        return this.makeRequest(uri).then((bts: object[]) => {
             console.log(`Found BTs: ${bts}`);
             return bts;
 
@@ -79,13 +85,5 @@ export class AppDynamicsApi {
 
 }
 
-const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
-
-appD.getBusinessApplications().then((apps: object[]) => {
-    apps.forEach((app) => {
-        console.log(app);
-        appD.getBusinessTransactions(app);
-    });
-});
 
 
