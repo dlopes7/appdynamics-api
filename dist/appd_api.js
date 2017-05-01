@@ -74,5 +74,22 @@ class AppDynamicsApi {
             console.log(`ERROR: ${err}`);
         });
     }
+    getBackends(app) {
+        let uri = '/controller/rest/applications/%s/backends';
+        let appID = null;
+        if (typeof app === 'object') {
+            appID = app.id;
+        }
+        else {
+            appID = app;
+        }
+        uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((backends) => {
+            console.log(`Found Backends: ${backends}`);
+            return backends;
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
 }
 exports.AppDynamicsApi = AppDynamicsApi;

@@ -26,6 +26,15 @@ interface ITier {
     type: string;
 }
 
+interface IBackend {
+    exitPointType: string;
+    tierId: number;
+    name: string;
+    applicationComponentNodeId: number;
+    id: number;
+    properties: object[];
+}
+
 export class AppDynamicsApi {
 
 
@@ -124,6 +133,28 @@ export class AppDynamicsApi {
         });
 
     }
+
+    getBackends(app) {
+        let uri = '/controller/rest/applications/%s/backends';
+        let appID = null;
+
+        if (typeof app === 'object') {
+            appID = app.id;
+        } else {
+            appID = app;
+        }
+
+        uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((backends: IBackend[]) => {
+            console.log(`Found Backends: ${backends}`);
+            return backends;
+
+
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
+
 
 }
 

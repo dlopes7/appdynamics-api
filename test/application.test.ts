@@ -60,3 +60,23 @@ describe('GetTiers', () => {
         });
     });
 });
+
+describe('GetBackends', () => {
+
+    it('Returns an array empty or with ID, Name, Properties', () => {
+        const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
+
+        return appD.getBusinessApplications().then((apps) => {
+
+            // Should work with an object
+            return appD.getBackends(apps[0]).then((backends) => {
+                if (backends.length > 0) {
+                    expect(backends[0]).to.have.property('id');
+                    expect(backends[0]).to.have.property('name');
+                    expect(backends[0]).to.have.property('properties');
+                }
+            });
+
+        });
+    });
+});
