@@ -90,17 +90,17 @@ describe('Get Backends', () => {
 
 describe('Get Nodes', () => {
 
-    it('Returns an array empty or with ID, Name, Properties', () => {
+    it('Returns an array empty or with ID, Name, nodeUniqueLocalId', () => {
         const appD = new AppDynamicsApi(controller, user, pass);
 
         return appD.getBusinessApplications().then((apps) => {
 
             // Should work with an object
-            return appD.getBackends(apps[0]).then((backends) => {
-                if (backends.length > 0) {
-                    expect(backends[0]).to.have.property('id');
-                    expect(backends[0]).to.have.property('name');
-                    expect(backends[0]).to.have.property('properties');
+            return appD.getNodes(apps[0]).then((nodes) => {
+                if (nodes.length > 0) {
+                    expect(nodes[0]).to.have.property('id');
+                    expect(nodes[0]).to.have.property('name');
+                    expect(nodes[0]).to.have.property('nodeUniqueLocalId');
                 }
             });
 

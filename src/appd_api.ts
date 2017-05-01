@@ -35,6 +35,25 @@ interface IBackend {
     properties: object[];
 }
 
+interface INode {
+    appAgentVersion: string;
+    machineAgentVersion: number;
+    agentType: string;
+    type: number;
+    id: number;
+    machineName: string;
+    appAgentPresent: boolean;
+    nodeUniqueLocalId: string;
+    machineId: number;
+    machineOSType: string;
+    tierId: number;
+    tierName: string;
+    machineAgentPresent: boolean;
+    name: string;
+    ipAddresses: object[];
+
+}
+
 export class AppDynamicsApi {
 
 
@@ -155,6 +174,26 @@ export class AppDynamicsApi {
         });
     }
 
+    getNodes(app) {
+        let uri = '/controller/rest/applications/%s/nodes';
+        let appID = null;
+
+        if (typeof app === 'object') {
+            appID = app.id;
+        } else {
+            appID = app;
+        }
+
+        uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((nodes: INode[]) => {
+            console.log(`Found Nodes: ${nodes}`);
+            return nodes;
+
+
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
 
 }
 
