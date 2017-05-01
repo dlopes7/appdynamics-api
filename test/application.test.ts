@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import * as mocha from 'mocha';
 import * as chai from 'chai';
 
@@ -5,11 +8,15 @@ import { AppDynamicsApi } from '../src/appd_api';
 
 const expect = chai.expect;
 
-describe('GetBusinessApplications', () => {
+const controller = process.env.CONTROLLER_HOST;
+const user = process.env.CONTROLLER_USER;
+const pass = process.env.CONTROLLER_PASSWORD;
+
+describe('Get Business Applications', () => {
 
     it('Returns an array empty or with ID and Name', () => {
-        const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
-        console.log('david');
+        const appD = new AppDynamicsApi(controller, user, pass);
+        console.log(user);
 
         return appD.getBusinessApplications().then((apps) => {
             expect(apps).to.be.an('array');
@@ -21,10 +28,10 @@ describe('GetBusinessApplications', () => {
     });
 });
 
-describe('GetBusinessTransactions', () => {
+describe('Get Business Transactions', () => {
 
     it('Returns an array empty or with ID, Name, InternalName', () => {
-        const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
+        const appD = new AppDynamicsApi(controller, user, pass);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -41,10 +48,10 @@ describe('GetBusinessTransactions', () => {
     });
 });
 
-describe('GetTiers', () => {
+describe('Get Tiers', () => {
 
     it('Returns an array empty or with ID, Name, Type', () => {
-        const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
+        const appD = new AppDynamicsApi(controller, user, pass);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -61,10 +68,30 @@ describe('GetTiers', () => {
     });
 });
 
-describe('GetBackends', () => {
+describe('Get Backends', () => {
 
     it('Returns an array empty or with ID, Name, Properties', () => {
-        const appD = new AppDynamicsApi('vagrant-controller', 'david', '181088');
+        const appD = new AppDynamicsApi(controller, user, pass);
+
+        return appD.getBusinessApplications().then((apps) => {
+
+            // Should work with an object
+            return appD.getBackends(apps[0]).then((backends) => {
+                if (backends.length > 0) {
+                    expect(backends[0]).to.have.property('id');
+                    expect(backends[0]).to.have.property('name');
+                    expect(backends[0]).to.have.property('properties');
+                }
+            });
+
+        });
+    });
+});
+
+describe('Get Nodes', () => {
+
+    it('Returns an array empty or with ID, Name, Properties', () => {
+        const appD = new AppDynamicsApi(controller, user, pass);
 
         return appD.getBusinessApplications().then((apps) => {
 
