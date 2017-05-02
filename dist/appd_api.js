@@ -74,6 +74,30 @@ class AppDynamicsApi {
             console.log(`ERROR: ${err}`);
         });
     }
+    getTier(app, tier) {
+        let uri = '/controller/rest/applications/%s/tiers/%s';
+        let appID = null;
+        let tierID = null;
+        if (typeof app === 'object') {
+            appID = app.id;
+        }
+        else {
+            appID = app;
+        }
+        if (typeof tier === 'object') {
+            tierID = tier.id;
+        }
+        else {
+            tierID = tier;
+        }
+        uri = util.format(uri, appID, tierID);
+        return this.makeRequest(uri).then((tiers) => {
+            console.log(`Found Tiers: ${tiers}`);
+            return (tiers.length > 0) ? tiers[0] : null;
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
     getBackends(app) {
         let uri = '/controller/rest/applications/%s/backends';
         let appID = null;
@@ -101,6 +125,54 @@ class AppDynamicsApi {
             appID = app;
         }
         uri = util.format(uri, appID);
+        return this.makeRequest(uri).then((nodes) => {
+            console.log(`Found Nodes: ${nodes}`);
+            return nodes;
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
+    getNode(app, node) {
+        let uri = '/controller/rest/applications/%s/nodes/%s';
+        let appID = null;
+        let nodeID = null;
+        if (typeof app === 'object') {
+            appID = app.id;
+        }
+        else {
+            appID = app;
+        }
+        if (typeof node === 'object') {
+            nodeID = node.id;
+        }
+        else {
+            nodeID = node;
+        }
+        uri = util.format(uri, appID, nodeID);
+        return this.makeRequest(uri).then((nodes) => {
+            console.log(`Found Node: ${nodes}`);
+            return (nodes.length > 0) ? nodes[0] : null;
+        }).catch((err) => {
+            console.log(`ERROR: ${err}`);
+        });
+    }
+    getNodesInTier(app, tier) {
+        let uri = '/controller/rest/applications/%s/tiers/%s/nodes';
+        let appID = null;
+        let tierID = null;
+        if (typeof app === 'object') {
+            appID = app.id;
+        }
+        else {
+            appID = app;
+        }
+        if (typeof tier === 'object') {
+            tierID = tier.id;
+        }
+        else {
+            tierID = tier;
+        }
+        uri = util.format(uri, appID, tierID);
         return this.makeRequest(uri).then((nodes) => {
             console.log(`Found Nodes: ${nodes}`);
             return nodes;
