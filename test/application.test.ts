@@ -11,11 +11,12 @@ const expect = chai.expect;
 const controller = process.env.CONTROLLER_HOST;
 const user = process.env.CONTROLLER_USER;
 const pass = process.env.CONTROLLER_PASSWORD;
+const tenant = process.env.CONTROLLER_TENANT;
 
 describe('Get Business Applications', () => {
 
     it('Returns an array empty or with ID and Name', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
         console.log(user);
 
         return appD.getBusinessApplications().then((apps) => {
@@ -31,7 +32,7 @@ describe('Get Business Applications', () => {
 describe('Get Business Transactions', () => {
 
     it('Returns an array empty or with ID, Name, InternalName', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -51,7 +52,7 @@ describe('Get Business Transactions', () => {
 describe('Get Tiers', () => {
 
     it('Returns an array empty or with ID, Name, Type', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -71,7 +72,7 @@ describe('Get Tiers', () => {
 describe('Get Backends', () => {
 
     it('Returns an array empty or with ID, Name, Properties', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -91,7 +92,7 @@ describe('Get Backends', () => {
 describe('Get Nodes', () => {
 
     it('Returns an array empty or with ID, Name, nodeUniqueLocalId', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
 
@@ -111,7 +112,7 @@ describe('Get Nodes', () => {
 describe('Get single Node', () => {
 
     it('Returns a Node object with ID, Name, nodeUniqueLocalId', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
             return appD.getNodes(apps[0]).then((nodes) => {
@@ -128,7 +129,7 @@ describe('Get single Node', () => {
 describe('Get Nodes in Tier', () => {
 
     it('Returns a list of Nodes in a Tier with ID, Name, nodeUniqueLocalId, or an empty list', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
             return appD.getTiers(apps[0]).then((tiers) => {
@@ -147,7 +148,7 @@ describe('Get Nodes in Tier', () => {
 describe('Get single Tier', () => {
 
     it('Returns a Tier object with ID, Name, Type', () => {
-        const appD = new AppDynamicsApi(controller, user, pass);
+        const appD = new AppDynamicsApi(controller, user, pass, tenant);
 
         return appD.getBusinessApplications().then((apps) => {
             return appD.getTiers(apps[0]).then((tiers) => {

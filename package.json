@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/appd_api.js",
   "scripts": {
-    "test": "mocha --compilers ts:ts-node/register test/**/*.test.ts"
+    "test": "mocha --timeout 5000 --compilers ts:ts-node/register test/**/metric.test.ts"
   },
   "author": "",
   "license": "ISC",
