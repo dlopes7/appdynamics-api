@@ -10,6 +10,7 @@ class AppDynamicsApi {
         this.controllerUrl = controller;
         this.user = user + '@' + (tenant || 'customer1');
         this.password = password;
+        this.metricHierarchy = { name: 'root', type: 'folder', children: [] };
     }
     makeRequest(uri, qs) {
         if (qs == null) {
@@ -181,6 +182,9 @@ class AppDynamicsApi {
         });
     }
     // Metrics API
+    buildMetricHierarchy(path) {
+        const arrayNodes = path.split('|');
+    }
     getMetricHierarchy(app, metricPath) {
         let uri = '/controller/rest/applications/%s/metrics';
         let appID = null;
@@ -193,18 +197,25 @@ class AppDynamicsApi {
         if (metricPath == null) {
             metricPath = '';
         }
-        console.log('Processing ' + metricPath);
+        else {
+            metricPath += '|';
+        }
+        // console.log('Processing ' + metricPath);
         uri = util.format(uri, appID);
         return this.makeRequest(uri, { 'metric-path': metricPath })
             .then((metrics) => {
             metrics.forEach((metric) => {
-                if (metric.type === 'folder') {
-                    console.log('Diving into "' + metric.name + '" ' + i++);
-                    return this.getMetricHierarchy(app, metric.name).
+                const fullPath = metricPath + metric.name;
+                if (metric.type === 'folder' && fullPath.startsWith('Application Infrastructure Performance')) {
+                    return this.getMetricHierarchy(app, fullPath).
                         then((children) => {
-                        console.log(`Children of ${metric.name}: ${children}`);
+                        //console.log(`Children of ${metric.name}: ${children}`);
                         metric.children = children;
                     });
+                }
+                else {
+                    console.log(fullPath);
+                    this.buildMetricHierarchy(fullPath);
                 }
             });
             return metrics;
@@ -212,17 +223,17 @@ class AppDynamicsApi {
     }
 }
 exports.AppDynamicsApi = AppDynamicsApi;
-const controller = process.env.CONTROLLER_HOST;
-const user = process.env.CONTROLLER_USER;
-const pass = process.env.CONTROLLER_PASSWORD;
-const tenant = process.env.CONTROLLER_TENANT;
-const appD = new AppDynamicsApi(controller, user, pass, tenant);
-appD.getBusinessApplications().then((apps) => {
-    if (apps.length > 0) {
-        appD.getMetricHierarchy(apps[0]).then((metricHierarchy) => {
-            console.log('\nGOT THEM');
-            console.log(metricHierarchy);
-            console.log('END\n');
-        });
-    }
-});
+// const controller = process.env.CONTROLLER_HOST;
+// const user = process.env.CONTROLLER_USER;
+// const pass = process.env.CONTROLLER_PASSWORD;
+// const tenant = process.env.CONTROLLER_TENANT;
+// const appD = new AppDynamicsApi(controller, user, pass, tenant);
+// appD.getBusinessApplications().then((apps) => {
+//     if (apps.length > 0) {
+//         appD.getMetricHierarchy(apps[0]).then((metricHierarchy) => {
+//             console.log('\nGOT THEM');
+//             console.log(metricHierarchy);
+//             console.log('END\n');
+//         });
+//     }
+// });
