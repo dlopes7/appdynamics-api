@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const rp = require("request-promise");
+const request = require("request");
 const util = require("util");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -12,15 +13,19 @@ class AppDynamicsApi {
         this.password = password;
         this.metricHierarchy = { name: 'root', type: 'folder', children: [] };
     }
-    makeRequest(uri, qs) {
+    makeRequest(uri, qs, jar) {
         if (qs == null) {
             qs = {};
+        }
+        if (jar == null) {
+            jar = {};
         }
         qs.output = 'json';
         const options = {
             method: 'GET',
             url: this.controllerUrl + uri,
             qs,
+            jar,
             json: true,
             auth: {
                 user: this.user,
@@ -186,7 +191,7 @@ class AppDynamicsApi {
         const arrayNodes = path.split('|');
     }
     getMetricHierarchy(app, metricPath) {
-        let uri = '/controller/rest/applications/%s/metrics';
+        let uri = '/controller/restui/metric/application/%s/metricbrowser';
         let appID = null;
         if (typeof app === 'object') {
             appID = app.id;
@@ -200,40 +205,28 @@ class AppDynamicsApi {
         else {
             metricPath += '|';
         }
-        // console.log('Processing ' + metricPath);
+        const cookieJar = request.jar(); // We need this to maintain session (JSESSIONID needed for next request)
         uri = util.format(uri, appID);
-        return this.makeRequest(uri, { 'metric-path': metricPath })
-            .then((metrics) => {
-            metrics.forEach((metric) => {
-                const fullPath = metricPath + metric.name;
-                if (metric.type === 'folder' && fullPath.startsWith('Application Infrastructure Performance')) {
-                    return this.getMetricHierarchy(app, fullPath).
-                        then((children) => {
-                        //console.log(`Children of ${metric.name}: ${children}`);
-                        metric.children = children;
-                    });
-                }
-                else {
-                    console.log(fullPath);
-                    this.buildMetricHierarchy(fullPath);
-                }
+        return this.makeRequest('/api/ecl', {}, { jar: cookieJar }).then((res) => {
+            return this.makeRequest(uri, { path: 'root', jar: cookieJar })
+                .then((response) => {
+                return response;
             });
-            return metrics;
         });
     }
 }
 exports.AppDynamicsApi = AppDynamicsApi;
-// const controller = process.env.CONTROLLER_HOST;
-// const user = process.env.CONTROLLER_USER;
-// const pass = process.env.CONTROLLER_PASSWORD;
-// const tenant = process.env.CONTROLLER_TENANT;
-// const appD = new AppDynamicsApi(controller, user, pass, tenant);
-// appD.getBusinessApplications().then((apps) => {
-//     if (apps.length > 0) {
-//         appD.getMetricHierarchy(apps[0]).then((metricHierarchy) => {
-//             console.log('\nGOT THEM');
-//             console.log(metricHierarchy);
-//             console.log('END\n');
-//         });
-//     }
-// });
+const controller = process.env.CONTROLLER_HOST;
+const user = process.env.CONTROLLER_USER;
+const pass = process.env.CONTROLLER_PASSWORD;
+const tenant = process.env.CONTROLLER_TENANT;
+const appD = new AppDynamicsApi(controller, user, pass, tenant);
+appD.getBusinessApplications().then((apps) => {
+    if (apps.length > 0) {
+        appD.getMetricHierarchy(apps[0]).then((metricHierarchy) => {
+            console.log('\nGOT THEM');
+            console.log(metricHierarchy);
+            console.log('END\n');
+        });
+    }
+});
